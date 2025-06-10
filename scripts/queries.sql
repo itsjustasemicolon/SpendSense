@@ -212,8 +212,8 @@ ORDER BY date;
 --@name: credit_card_summary
 SELECT 
     account AS card_name,
-    SUM(CASE WHEN type = 'expense' THEN ABS(amount) ELSE 0 END) AS spent,
-    50000 AS limit
+    CAST(COALESCE(SUM(CASE WHEN type = 'expense' THEN ABS(amount) ELSE 0 END), 0) AS FLOAT) AS spent,
+    CAST(50000 AS FLOAT) AS "limit"
 FROM transactions
 WHERE lower(account) LIKE '%credit%'
   AND date >= date_trunc('month', CURRENT_DATE)

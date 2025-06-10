@@ -467,14 +467,12 @@ def main():
 
     # ----- TITLE & TABS -----
     st.title('Personal Finance Dashboard')
-    tab1, tab2, tab3, tab4 = st.tabs(['Home', 'Data', 'Dashboard', 'Documentation'])
-
-    # ----- SIDE BAR -----
+    tab1, tab2, tab3, tab4 = st.tabs(['Home', 'Data', 'Dashboard', 'Documentation'])    # ----- SIDE BAR -----
     with st.sidebar:
         st.header('Filters')
         column_options = ['binance', 'gcash', 'grabpay', 'maya', 'ronin', 'seabank', 'shopeepay', 'unionbank', 'wallet', 'net_worth']
         selected_columns = st.multiselect('Select accounts to display:', column_options, default=['net_worth'])
-        view = st.radio("Select view:", ["monthly", "weekly", "daily"], index=1, horizontal=True, key="sidebar")
+        view = st.radio("Select view:", ["monthly", "weekly", "daily"], index=0, horizontal=True, key="sidebar")
 
     # ----- HOME TAB -----
     with tab1:
@@ -639,89 +637,146 @@ def main():
                     'Receiving Methods', 'Account', 'Amount (₹)'
                 )
                 st.plotly_chart(fig, use_container_width=True)
-            st.markdown("---")
-
-            # Credit Card Summary Section
+            st.markdown("---")            # Credit Card Summary Section
             st.subheader("Credit Card Summary")
             try:
+                # Execute the query with enhanced error handling
                 credit_cards_df = query("credit_card_summary")
-
+                
                 if not credit_cards_df.empty:
-                    credit_cards_df['spent'] = credit_cards_df['spent'].astype(float)
-                    
-                    st.markdown("Enter or adjust the credit limit for each card below:")
+                    # Make sure columns exist and are properly typed
+                    if 'card_name' in credit_cards_df.columns and 'spent' in credit_cards_df.columns and 'limit' in credit_cards_df.columns:
+                        # Explicitly convert columns to ensure proper types
+                        credit_cards_df['spent'] = pd.to_numeric(credit_cards_df['spent'], errors='coerce').fillna(0.0)
+                        credit_cards_df['limit'] = pd.to_numeric(credit_cards_df['limit'], errors='coerce').fillna(50000.0)
+                        
+                        st.markdown("Enter or adjust the credit limit for each card below:")
 
-                    for idx, row in credit_cards_df.iterrows():
-                        card_name = row['card_name']
-                        spent_amount = row['spent']
-                        
-                        session_key_limit = f"credit_limit_{card_name}"
-                        default_placeholder_limit = 50000.0
+                        for idx, row in credit_cards_df.iterrows():
+                            card_name = row['card_name']
+                            spent_amount = float(row['spent'])  # Ensure it's a float
+                            
+                            session_key_limit = f"credit_limit_{card_name}"
+                            default_placeholder_limit = 50000.0
 
-                        # Initialize session state for this card's limit if not already set by user
-                        if session_key_limit not in st.session_state:
-                            st.session_state[session_key_limit] = default_placeholder_limit
+                            # Initialize session state for this card's limit if not already set by user
+                            if session_key_limit not in st.session_state:
+                                st.session_state[session_key_limit] = default_placeholder_limit
+                            
+                            st.markdown(f"#### {card_name}")
+                            
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                st.metric(label="Spent This Month", value=f"₹{spent_amount:,.0f}")
+                            
+                            with col2:
+                                # User input for limit, value from session state
+                                current_limit_for_input = float(st.session_state[session_key_limit])
+                                user_defined_limit = st.number_input(
+                                    f"Credit Limit", # Label is simpler as card name is in header
+                                    min_value=0.0,
+                                    value=current_limit_for_input,
+                                    step=1000.0,
+                                    key=f"input_{session_key_limit}", # Unique key for the input widget
+                                    help="Enter the total credit limit for this card."
+                                )
+                                # If user changes the limit, update session state and rerun
+                                if user_defined_limit != current_limit_for_input:
+                                    st.session_state[session_key_limit] = user_defined_limit
+                                    st.experimental_rerun()
+                            
+                            limit_left = user_defined_limit - spent_amount
+                            with col3:
+                                delta_color = "normal"
+                                if limit_left < 0:
+                                    delta_color = "inverse"
+                                elif limit_left < (user_defined_limit * 0.1): # If less than 10% limit left
+                                    delta_color = "off" # Typically red for 'off' in default theme
+                                    
+                                st.metric(label="Limit Left", value=f"₹{limit_left:,.0f}", delta_color=delta_color)
+                            st.markdown("---")
+
+                        # Display horizontal bar graphs for spend vs. limit
+                        st.markdown("##### Credit Card Utilization")
                         
-                        st.markdown(f"#### {card_name}")
-                        
-                        col1, col2, col3 = st.columns(3)
-                        
-                        with col1:
-                            st.metric(label="Spent This Month", value=f"₹{spent_amount:,.0f}")
-                        
-                        with col2:
-                            # User input for limit, value from session state
-                            current_limit_for_input = float(st.session_state[session_key_limit])
-                            user_defined_limit = st.number_input(
-                                f"Credit Limit", # Label is simpler as card name is in header
-                                min_value=0.0,
-                                value=current_limit_for_input,
-                                step=1000.0,
-                                key=f"input_{session_key_limit}", # Unique key for the input widget
-                                help="Enter the total credit limit for this card."
+                        for idx, row in credit_cards_df.iterrows():
+                            card_name = row['card_name']
+                            spent_amount = float(row['spent'])
+                            user_limit = float(st.session_state.get(f"credit_limit_{card_name}", 50000.0))
+                            
+                            # Calculate utilization percentage
+                            utilization_pct = min(100, (spent_amount / user_limit * 100)) if user_limit > 0 else 0
+                            
+                            # Create a DataFrame for the horizontal bar chart
+                            util_df = pd.DataFrame({
+                                'Category': ['Spent', 'Available'],
+                                'Amount': [spent_amount, max(0, user_limit - spent_amount)],
+                                'Color': ['#e57373', '#81c784']  # Red for spent, green for available
+                            })
+                            
+                            st.markdown(f"**{card_name}** - {utilization_pct:.1f}% utilized")
+                            
+                            # Create horizontal bar chart
+                            fig = px.bar(
+                                util_df, 
+                                y='Category', 
+                                x='Amount', 
+                                color='Color',
+                                color_discrete_map={'#e57373': '#e57373', '#81c784': '#81c784'},
+                                orientation='h',
+                                barmode='stack',
+                                height=100,
+                                template='plotly_dark'
                             )
-                            # If user changes the limit, update session state and rerun
-                            if user_defined_limit != current_limit_for_input:
-                                st.session_state[session_key_limit] = user_defined_limit
-                                st.experimental_rerun()
-                        
-                        limit_left = user_defined_limit - spent_amount
-                        with col3:
-                            delta_color = "normal"
-                            if limit_left < 0:
-                                delta_color = "inverse"
-                            elif limit_left < (user_defined_limit * 0.1): # If less than 10% limit left
-                                delta_color = "off" # Typically red for 'off' in default theme
-                                
-                            st.metric(label="Limit Left", value=f"₹{limit_left:,.0f}", delta_color=delta_color)
-                        st.markdown("---")
-
-                    # Optional: Display a summary table using the session_state values for limits
-                    summary_data_for_table = []
-                    for _, r in credit_cards_df.iterrows():
-                        cn = r['card_name']
-                        s = r['spent']
-                        lim = st.session_state.get(f"credit_limit_{cn}", default_placeholder_limit)
-                        ll = lim - s
-                        summary_data_for_table.append({
-                            "Card Name": cn,
-                            "Spent": s,
-                            "Limit": lim,
-                            "Limit Left": ll
-                        })
-                    
-                    if summary_data_for_table:
-                        st.markdown("##### Credit Card Overview Table")
-                        summary_df = pd.DataFrame(summary_data_for_table)
-                        st.dataframe(summary_df.set_index("Card Name"), use_container_width=True)
-
+                            
+                            # Update layout for a cleaner look
+                            fig.update_layout(
+                                showlegend=False,
+                                margin=dict(l=0, r=10, t=10, b=0),
+                                xaxis=dict(
+                                    title=None,
+                                    showgrid=False,
+                                    tickformat='₹,.0f'
+                                ),
+                                yaxis=dict(
+                                    title=None,
+                                    showgrid=False
+                                ),
+                                plot_bgcolor='rgba(0,0,0,0)',
+                                paper_bgcolor='rgba(0,0,0,0)'
+                            )
+                            
+                            # Add annotations for amounts
+                            fig.add_annotation(
+                                x=spent_amount/2,
+                                y='Spent',
+                                text=f"₹{spent_amount:,.0f}",
+                                showarrow=False,
+                                font=dict(color='white', size=12)
+                            )
+                            
+                            available = max(0, user_limit - spent_amount)
+                            if available > 0:
+                                fig.add_annotation(
+                                    x=spent_amount + available/2,
+                                    y='Available',
+                                    text=f"₹{available:,.0f}",
+                                    showarrow=False,
+                                    font=dict(color='white', size=12)
+                                )
+                            
+                            st.plotly_chart(fig, use_container_width=True)
+                            st.markdown("---")
+                    else:
+                        st.warning("Credit card data structure is not in the expected format. Please check the database query.")
                 else:
                     st.info("No credit card transactions found for the current month to summarize.")
             except Exception as e:
                 st.error(f"Error loading credit card summary: {str(e)}")
-                # For debugging, you might want to print the full traceback
-                # import traceback
-                # st.error(traceback.format_exc())
+                import traceback
+                st.error(traceback.format_exc())
+            st.markdown("---")
 
             # Expenses & Income by Category (Pie Charts)
             c1, c2 = st.columns(2)
