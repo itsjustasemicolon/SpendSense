@@ -209,18 +209,6 @@ WHERE date >= CURRENT_DATE - INTERVAL '30 days'
 GROUP BY date
 ORDER BY date;
 
--- Credit Card Summary Query
--- Returns: card_name, spent, limit
-CREATE OR REPLACE VIEW credit_card_summary AS
-SELECT 
-    account AS card_name,
-    SUM(CASE WHEN type = 'Expense' THEN -amount ELSE 0 END) AS spent,
-    MAX(limit) AS limit
-FROM transactions
-WHERE account_type = 'Credit Card'
-  AND date >= date_trunc('month', CURRENT_DATE)
-GROUP BY account;
-
 --@name: credit_card_summary
 SELECT 
     account AS card_name,
