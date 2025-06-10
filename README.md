@@ -16,19 +16,19 @@ any other file with the same CSV format to generate analytics.
 
 ## Motivation Behind the Project
 
-As an Indian student, managing my finances has always been a challenge—especially with limited pocket money and the need to balance studies, personal life, and unexpected expenses. For over a year, I’ve used the Bluecoins app to track every rupee spent and earned. Now, I want to go beyond just recording transactions and uncover meaningful insights from my own data.
+As an Indian student, managing my finances has always been a challenge—especially with limited pocket money and the need to balance studies, personal life, and unexpected expenses. For a while now I’ve used the Bluecoins app to track money spent and earned. Now, I want to go beyond just recording transactions and uncover meaningful insights from my own data.
 
 With this project, I aim to answer key questions about my spending and income habits:
 
-- **Where do I spend the most rupees?**  
+- **Where do I spend the most?**  
   Identifying my biggest expenses helps me prioritize and adjust my habits.
-- **What should my daily, weekly, and monthly budget look like in rupees?**  
-  Using my actual spending patterns, I want to set realistic and sustainable budgets in ₹.
+- **What should my daily, weekly, and monthly budget look like?**  
+  Using my actual spending patterns, I want to set realistic and sustainable budgets.
 - **Where does most of my money come from?**  
   Understanding my income sources helps me plan better for the future.
 - **What are my most preferred payment and receiving methods?**  
   Knowing which methods I use most often can help me streamline my finances.
-- **How much money moves in and out of my accounts over time in rupees?**  
+- **How much money moves in and out of my accounts over time?**  
   Tracking cash flow trends ensures I stay on top of my financial health.
 
 This project is also a chance for me to apply what I’ve learned as a computer science student. I’ve used:
