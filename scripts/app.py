@@ -2,7 +2,7 @@ from database import extract, transform, load, drop
 from read_queries import query
 import streamlit as st
 import plotly.express as px
-import pandas as pd  # for date to day-of-week conversion
+import pandas as pd
 from PIL import Image
 
 # --- GLOBAL STYLES ---
@@ -132,12 +132,48 @@ def load_css():
             footer {visibility: hidden;}
         </style>
     """, unsafe_allow_html=True)
-
-    # Add a custom footer at bottom of the page
     st.markdown(
         "<hr><div style='text-align:center; color:#7ecfff; margin-top:2rem;'>Powered by Personal Finance Dashboard © 2025</div>",
         unsafe_allow_html=True
     )
+
+# --- PROFESSIONAL PLOTLY FIGURE STYLING ---
+def styled_figure(fig, title, x_label, y_label, legend_title=None):
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=24, color='#e0e0e0')),
+        xaxis=dict(title=x_label, title_font=dict(size=16, color='#e0e0e0'), tickfont=dict(color='#e0e0e0')),
+        yaxis=dict(title=y_label, title_font=dict(size=16, color='#e0e0e0'), tickfont=dict(color='#e0e0e0')),
+        legend=dict(title=legend_title, font=dict(color='#e0e0e0'), bgcolor='#23272c'),
+        plot_bgcolor='#23272c',
+        paper_bgcolor='#23272c',
+        margin=dict(l=50, r=50, t=80, b=50),
+        template='plotly_dark',
+        hoverlabel=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
+    )
+    return fig
+
+def line_chart(df, x_col, y_cols, title, x_label, y_label, legend_title=None):
+    fig = px.line(df, x=x_col, y=y_cols, markers=True, line_shape='spline',
+                  color_discrete_sequence=px.colors.qualitative.Set2)
+    return styled_figure(fig, title, x_label, y_label, legend_title)
+
+def bar_chart(df, x_col, y_col, title, x_label, y_label, color=None, color_scale=None):
+    fig = px.bar(df, x=x_col, y=y_col, color=color, color_continuous_scale=color_scale,
+                 template='plotly_dark')
+    if color_scale:
+        fig.update_traces(marker_line_width=1.5, marker_line_color='#7ecfff')
+    else:
+        fig.update_traces(marker_line_width=1.5, marker_line_color='#1a73e8')
+    return styled_figure(fig, title, x_label, y_label)
+
+def pie_chart(df, values, names, title, legend_title=None, color_sequence=None):
+    fig = px.pie(df, values=values, names=names, hole=0.4, color_discrete_sequence=color_sequence,
+                 template='plotly_dark')
+    fig.update_traces(textposition='inside', textinfo='percent+label',
+                      pull=[0.05]*len(df), marker=dict(line=dict(color='#23272c', width=2)))
+    fig.update_layout(title=dict(text=title, font=dict(size=24, color='#e0e0e0')),
+                      legend=dict(title=legend_title, font=dict(color='#e0e0e0'), bgcolor='#23272c'))
+    return fig
 
 def main():
     # ----- PAGE SETUP -----
@@ -146,7 +182,7 @@ def main():
         page_icon=':money_with_wings:',
         layout='wide'
     )
-    load_css() # Load CSS after page config
+    load_css()
 
     # ----- TITLE & TABS -----
     st.title('Personal Finance Dashboard')
@@ -155,10 +191,8 @@ def main():
     # ----- SIDE BAR -----
     with st.sidebar:
         st.header('Filters')
-        # Accounts filter
-        column_options = ['binance', 'gcash', 'grabpay', 'maya', 'ronin', 'seabank', 'shopeepay', 'unionbank', 'wallet', 'net_worth']        
+        column_options = ['binance', 'gcash', 'grabpay', 'maya', 'ronin', 'seabank', 'shopeepay', 'unionbank', 'wallet', 'net_worth']
         selected_columns = st.multiselect('Select accounts to display:', column_options, default=['net_worth'])
-        # Views filter
         view = st.radio("Select view:", ["monthly", "weekly", "daily"], index=1, horizontal=True, key="sidebar")
 
     # ----- HOME TAB -----
@@ -204,7 +238,6 @@ def main():
                 - **SQL** (relational databases and writing queries)
                 - **Git workflow** (version control and collaboration)
                 - **Project management and documentation** (to keep everything organized and reproducible)
-
                 By building this financial tracker, I hope to not only manage my money better but also grow my skills in programming, data analysis, and web development—while keeping every rupee in check!
             """)
             try:
@@ -276,98 +309,42 @@ def main():
             # Account Balance Over Time
             if view == 'monthly':
                 monthly_amount_over_time = query("monthly_amount_over_time")
-                fig_accounts_over_time = px.line(
-                    monthly_amount_over_time, x='month', y=selected_columns,
-                    title='Account Balance Over Time',
-                    markers=True,
-                    line_shape='spline',
-                    template='plotly_dark',
-                    color_discrete_sequence=px.colors.qualitative.Set2
-                )
-                fig_accounts_over_time.update_layout(
-                    title_font_size=22,
-                    xaxis_title='Month',
-                    yaxis_title='Amount (₹)',
-                    legend_title='Account',
-                    font=dict(size=14, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
+                fig = line_chart(
+                    monthly_amount_over_time, 'month', selected_columns,
+                    'Account Balance Over Time', 'Month', 'Amount (₹)', 'Account'
                 )
             elif view == 'weekly':
                 weekly_amount_over_time = query("weekly_amount_over_time")
-                fig_accounts_over_time = px.line(
-                    weekly_amount_over_time, x='week', y=selected_columns,
-                    title='Account Balance Over Time',
-                    markers=True,
-                    line_shape='spline',
-                    template='plotly_dark',
-                    color_discrete_sequence=px.colors.qualitative.Set2
-                )
-                fig_accounts_over_time.update_layout(
-                    title_font_size=22,
-                    xaxis_title='Week',
-                    yaxis_title='Amount (₹)',
-                    legend_title='Account',
-                    font=dict(size=14, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
+                fig = line_chart(
+                    weekly_amount_over_time, 'week', selected_columns,
+                    'Account Balance Over Time', 'Week', 'Amount (₹)', 'Account'
                 )
             elif view == 'daily':
                 daily_amount_over_time = query("daily_amount_over_time")
-                fig_accounts_over_time = px.line(
-                    daily_amount_over_time, x='day', y=selected_columns,
-                    title='Account Balance Over Time',
-                    markers=True,
-                    line_shape='spline',
-                    template='plotly_dark',
-                    color_discrete_sequence=px.colors.qualitative.Set2
+                fig = line_chart(
+                    daily_amount_over_time, 'day', selected_columns,
+                    'Account Balance Over Time', 'Day', 'Amount (₹)', 'Account'
                 )
-                fig_accounts_over_time.update_layout(
-                    title_font_size=22,
-                    xaxis_title='Day',
-                    yaxis_title='Amount (₹)',
-                    legend_title='Account',
-                    font=dict(size=14, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                )
-            st.plotly_chart(fig_accounts_over_time, use_container_width=True)
-
+            st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
 
-            # --- Monthly Cash Flow Bar Graph ---
+            # Monthly Cash Flow Bar Graph
             if view == 'monthly':
                 try:
                     monthly_cash_flow = query("monthly_cash_flow")
-                    fig_cash_flow = px.bar(
-                        monthly_cash_flow, x='month', y='cash_flow',
-                        title='Monthly Cash Flow (Income - Expenses)',
-                        color='cash_flow',
-                        color_continuous_scale='bluered',
-                        template='plotly_dark',
+                    fig = bar_chart(
+                        monthly_cash_flow, 'month', 'cash_flow',
+                        'Monthly Cash Flow (Income - Expenses)', 'Month', 'Cash Flow (₹)',
+                        color='cash_flow', color_scale='bluered'
                     )
-                    fig_cash_flow.update_layout(
-                        title_font_size=22,
-                        xaxis_title='Month',
-                        yaxis_title='Cash Flow (₹)',
-                        font=dict(size=14, color='#e0e0e0'),
-                        plot_bgcolor='#23272c',
-                        paper_bgcolor='#23272c',
-                        legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                    )
-                    fig_cash_flow.update_traces(marker_line_width=1.5, marker_line_color='#7ecfff')
-                    st.plotly_chart(fig_cash_flow, use_container_width=True)
+                    st.plotly_chart(fig, use_container_width=True)
                 except Exception as e:
                     st.error(f"Error loading monthly cash flow: {str(e)}")
             st.markdown("---")
 
-            # --- Recent Net Daily Summary (Last 7 Days) ---
+            # Recent Net Daily Summary (Last 7 Days)
             daily_summary_30 = query("daily_net_summary_last_n_days")
             daily_summary_30['date'] = pd.to_datetime(daily_summary_30['date'])
-            # Build a full last-7-day date range and merge to include days with zero net amount
             today = pd.Timestamp.today().normalize()
             last_7_dates = pd.date_range(end=today, periods=7)
             daily_summary_7 = pd.DataFrame({'date': last_7_dates})
@@ -378,120 +355,58 @@ def main():
             avg_7 = daily_summary_7['net_amount'].mean()
             avg_30 = daily_summary_30['net_amount'].mean()
 
-            fig_daily_summary = px.bar(
-                daily_summary_7, x='day', y='net_amount',
-                title='Daily Net Amount (Last 7 Days)',
-                template='plotly_dark',
-                color_discrete_sequence=['#7ecfff'],
+            fig = bar_chart(
+                daily_summary_7, 'day', 'net_amount',
+                'Daily Net Amount (Last 7 Days)', 'Day', 'Net Amount (₹)'
             )
-            fig_daily_summary.add_hline(
+            fig.add_hline(
                 y=avg_7, line_dash='dash', line_color='#7ecfff',
                 annotation_text='7-day avg', annotation_position='top left'
             )
-            fig_daily_summary.add_hline(
+            fig.add_hline(
                 y=avg_30, line_dash='dash', line_color='#1a73e8',
                 annotation_text='30-day avg', annotation_position='bottom left'
             )
-            fig_daily_summary.update_layout(
-                xaxis_title='Day',
-                yaxis_title='Net Amount (₹)',
-                font=dict(size=13, color='#e0e0e0'),
-                plot_bgcolor='#23272c',
-                paper_bgcolor='#23272c',
-            )
-            st.plotly_chart(fig_daily_summary, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
 
+            # Payment & Receiving Methods
             b1, b2 = st.columns(2)
             with b1:
                 payment_methods = query("payment_methods")
-                fig_payment_methods = px.bar(
-                    payment_methods, x='account', y='amount',
-                    title='Payment Methods',
-                    color_discrete_sequence=['#7ecfff'],
-                    template='plotly_dark',
+                fig = bar_chart(
+                    payment_methods, 'account', 'amount',
+                    'Payment Methods', 'Account', 'Amount (₹)'
                 )
-                fig_payment_methods.update_layout(
-                    title_font_size=20,
-                    xaxis_title='Account',
-                    yaxis_title='Amount (₹)',
-                    font=dict(size=13, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                )
-                fig_payment_methods.update_traces(marker_line_width=1.5, marker_line_color='#7ecfff')
-                st.plotly_chart(fig_payment_methods, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
             with b2:
                 receiving_methods = query("receiving_methods")
-                fig_receiving_methods = px.bar(
-                    receiving_methods, x='account', y='amount',
-                    title='Receiving Methods',
-                    color_discrete_sequence=['#1a73e8'],
-                    template='plotly_dark',
+                fig = bar_chart(
+                    receiving_methods, 'account', 'amount',
+                    'Receiving Methods', 'Account', 'Amount (₹)'
                 )
-                fig_receiving_methods.update_layout(
-                    title_font_size=20,
-                    xaxis_title='Account',
-                    yaxis_title='Amount (₹)',
-                    font=dict(size=13, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                )
-                fig_receiving_methods.update_traces(marker_line_width=1.5, marker_line_color='#1a73e8')
-                st.plotly_chart(fig_receiving_methods, use_container_width=True)
-
+                st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
 
+            # Expenses & Income by Category (Pie Charts)
             c1, c2 = st.columns(2)
             with c1:
                 expenses_per_category = query("expenses_per_category")
-                fig_expenses_by_category = px.pie(
-                    expenses_per_category, values='expenses', names='category',
-                    title='Expenses Per Category', hole=0.45,
-                    color_discrete_sequence=px.colors.sequential.RdPu_r,
-                    template='plotly_dark',
+                fig = pie_chart(
+                    expenses_per_category, 'expenses', 'category',
+                    'Expenses Per Category', 'Category', px.colors.sequential.RdPu_r
                 )
-                fig_expenses_by_category.update_traces(
-                    textposition='inside', textinfo='percent+label',
-                    pull=[0.05]*len(expenses_per_category),
-                    marker=dict(line=dict(color='#23272c', width=2))
-                )
-                fig_expenses_by_category.update_layout(
-                    title_font_size=20,
-                    legend_title='Category',
-                    font=dict(size=13, color='#e0e0e0'),
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0')),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                )
-                st.plotly_chart(fig_expenses_by_category, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
             with c2:
                 income_per_category = query("income_per_category")
-                fig_income = px.pie(
-                    income_per_category, values='income', names='category',
-                    title='Income Per Category', hole=0.45,
-                    color_discrete_sequence=px.colors.sequential.GnBu_r,
-                    template='plotly_dark',
+                fig = pie_chart(
+                    income_per_category, 'income', 'category',
+                    'Income Per Category', 'Category', px.colors.sequential.GnBu_r
                 )
-                fig_income.update_traces(
-                    textposition='inside', textinfo='percent+label',
-                    pull=[0.05]*len(income_per_category),
-                    marker=dict(line=dict(color='#23272c', width=2))
-                )
-                fig_income.update_layout(
-                    title_font_size=20,
-                    legend_title='Category',
-                    font=dict(size=13, color='#e0e0e0'),
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0')),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                )
-                st.plotly_chart(fig_income, use_container_width=True)
-
+                st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
 
+            # Top Expenses & Income Sources (Tables)
             d1, d2 = st.columns(2)
             with d1:
                 st.markdown("###### Top Expenses")
@@ -499,65 +414,31 @@ def main():
             with d2:
                 st.markdown("###### Top Income Sources")
                 st.dataframe(income_per_category, height=400, use_container_width=True)
-
             st.markdown("---")
 
             # Expenses Over Time
             if view == 'monthly':
                 monthly_expenses = query("monthly_expenses")
-                fig_monthly_expenses = px.line(
-                    monthly_expenses, x='month', y='expenses', 
-                    title='Monthly Expenses', template='plotly_dark',
-                    line_shape='spline'
+                fig = line_chart(
+                    monthly_expenses, 'month', 'expenses',
+                    'Monthly Expenses', 'Month', 'Amount (₹)'
                 )
-                fig_monthly_expenses.update_layout(
-                    title_font_size=22,
-                    xaxis_title='Month',
-                    yaxis_title='Amount (₹)',
-                    font=dict(size=14, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                )
-                st.plotly_chart(fig_monthly_expenses, use_container_width=True)
             elif view == "weekly":
                 weekly_expenses = query("weekly_expenses")
-                fig_weekly_expenses = px.line(
-                    weekly_expenses, x='week', y='expenses', 
-                    title='Weekly Expenses', template='plotly_dark',
-                    line_shape='spline'
+                fig = line_chart(
+                    weekly_expenses, 'week', 'expenses',
+                    'Weekly Expenses', 'Week', 'Amount (₹)'
                 )
-                fig_weekly_expenses.update_layout(
-                    title_font_size=22,
-                    xaxis_title='Week',
-                    yaxis_title='Amount (₹)',
-                    font=dict(size=14, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                )
-                st.plotly_chart(fig_weekly_expenses, use_container_width=True)
             elif view == "daily":
                 daily_expenses = query("daily_expenses")
-                fig_daily_expenses = px.line(
-                    daily_expenses, x='day', y='expenses', 
-                    title='Daily Expenses', template='plotly_dark',
-                    line_shape='spline'
+                fig = line_chart(
+                    daily_expenses, 'day', 'expenses',
+                    'Daily Expenses', 'Day', 'Amount (₹)'
                 )
-                fig_daily_expenses.update_layout(
-                    title_font_size=22,
-                    xaxis_title='Day',
-                    yaxis_title='Amount (₹)',
-                    font=dict(size=14, color='#e0e0e0'),
-                    plot_bgcolor='#23272c',
-                    paper_bgcolor='#23272c',
-                    legend=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
-                )
-                st.plotly_chart(fig_daily_expenses, use_container_width=True)
-
+            st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
 
-            # --- Calendar Day Picker ---
+            # Calendar Day Picker
             st.subheader("View Transactions by Day")
             selected_date = st.date_input("Select a date to view transactions", key="calendar")
             if selected_date:
