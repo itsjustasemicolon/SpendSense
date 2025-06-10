@@ -204,10 +204,6 @@ def load_css():
             }
         </style>
     """, unsafe_allow_html=True)
-    st.markdown(
-        "<hr><div style='text-align:center; color:#7ecfff; margin-top:2rem;'>Powered by Personal Finance Dashboard © 2025</div>",
-        unsafe_allow_html=True
-    )
 
 # --- PROFESSIONAL PLOTLY FIGURE STYLING ---
 def styled_figure(fig, title, x_label, y_label, legend_title=None):
@@ -438,9 +434,11 @@ def main():
                 # Query should return columns: card_name, spent, limit
                 credit_cards = query("credit_card_summary")
                 if not credit_cards.empty:
+                    # Ensure 'limit' is float for calculations and input
+                    credit_cards['limit'] = credit_cards['limit'].astype(float)
                     # Add input boxes for credit limits if missing or zero
                     for idx, row in credit_cards.iterrows():
-                        if not row['limit'] or row['limit'] == 0:
+                        if pd.isna(row['limit']) or row['limit'] == 0:
                             limit_input = st.number_input(
                                 f"Set credit limit for {row['card_name']}",
                                 min_value=0.0,
