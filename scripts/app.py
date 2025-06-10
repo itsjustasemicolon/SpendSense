@@ -11,10 +11,9 @@ def load_css():
         <style>
             /* Modern Professional Theme for Finance Dashboard */
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-            
-            body {
+              body {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-                color: #f0f2f5;
+                color: #f8fafc;
                 background-color: #121212;
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
@@ -32,9 +31,8 @@ def load_css():
                 margin: 0 auto;
             }
             
-            /* Headings */
-            h1, h2, h3, h4, h5, h6 {
-                color: #f0f2f5;
+            /* Headings */            h1, h2, h3, h4, h5, h6 {
+                color: #ffffff;
                 font-weight: 700;
                 letter-spacing: -0.01em;
                 margin-bottom: 0.8em;
@@ -52,11 +50,10 @@ def load_css():
             h4 { font-size: 1.5em; color: #3a7bd5; }
             h5 { font-size: 1.25em; color: #3a7bd5; }
             h6 { font-size: 1em; color: #00d2ff; margin-bottom: 0.4em; }
-            
-            p, li {
+              p, li {
                 font-size: 1rem;
                 line-height: 1.6;
-                color: #b0b7c3;
+                color: #d8e1f0;
             }
             
             /* Card-like styling for containers */
@@ -71,13 +68,12 @@ def load_css():
                 padding: 4px;
                 border-radius: 8px;
             }
-            
-            .stTabs [data-baseweb="tab"] {
+              .stTabs [data-baseweb="tab"] {
                 height: 48px;
                 background-color: #252525;
                 border-radius: 6px;
                 padding: 0 20px;
-                color: #b0b7c3;
+                color: #d8e1f0;
                 font-weight: 500;
                 transition: all 0.2s ease;
                 border: none !important;
@@ -158,10 +154,9 @@ def load_css():
                 padding: 1rem 1.2rem !important;
                 border-bottom: 1px solid #333 !important;
             }
-            
-            /* Data tables */
+              /* Data tables */
             .stDataFrame {
-                border: 1px solid #333;
+                border: 1px solid #444;
                 border-radius: 12px;
                 background: #252525;
                 overflow: hidden;
@@ -173,12 +168,11 @@ def load_css():
                 font-weight: 600;
                 text-align: left;
                 padding: 0.75rem 1rem !important;
-                border-bottom: 2px solid #333;
+                border-bottom: 2px solid #444;
             }
-            
-            .stDataFrame tbody tr {
+              .stDataFrame tbody tr {
                 background-color: #252525;
-                color: #f0f2f5;
+                color: #ffffff;
                 border-bottom: 1px solid #333;
                 transition: background-color 0.15s ease;
             }
@@ -244,22 +238,20 @@ def load_css():
                 color: #00d2ff;
                 margin-bottom: 1.5rem;
             }
-            
-            [data-testid="stSidebar"] .stRadio label {
+              [data-testid="stSidebar"] .stRadio label {
                 font-weight: 500;
-                color: #f0f2f5;
+                color: #ffffff;
             }
             
             /* Hide default Streamlit menu and footer */
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
             
-            /* Input fields styling */
-            div[data-testid="stDateInput"] input,
+            /* Input fields styling */            div[data-testid="stDateInput"] input,
             div[data-testid="stTextInput"] input,
             div[data-testid="stNumberInput"] input {
                 background-color: #303030;
-                color: #f0f2f5;
+                color: #ffffff;
                 border: 1px solid #444;
                 border-radius: 8px;
                 padding: 10px 14px;
@@ -274,10 +266,9 @@ def load_css():
                 box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
                 outline: none;
             }
-            
-            div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+              div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
                 background-color: #303030;
-                color: #f0f2f5;
+                color: #ffffff;
                 border: 1px solid #444;
                 border-radius: 8px;
                 transition: all 0.2s ease;
@@ -311,9 +302,8 @@ def load_css():
                 font-size: 0.85rem;
                 font-weight: 500;
             }
-            
-            div[data-testid="stMultiSelect"] input {
-                color: #f0f2f5;
+              div[data-testid="stMultiSelect"] input {
+                color: #ffffff;
                 padding: 6px;
                 font-size: 0.95rem;
             }
@@ -391,13 +381,12 @@ def load_css():
                 background: linear-gradient(90deg, #3a7bd5, #00d2ff) !important;
             }
             
-            /* Success message styling */
-            .stSuccess {
+            /* Success message styling */            .stSuccess {
                 background: linear-gradient(145deg, rgba(41, 171, 135, 0.1), rgba(41, 171, 135, 0.2));
                 border: 1px solid rgba(41, 171, 135, 0.3);
                 border-radius: 10px;
                 padding: 1rem 1.25rem;
-                color: #2ecc71;
+                color: #4ecca3;
             }
             
             /* Error message styling */
@@ -418,13 +407,12 @@ def load_css():
                 color: #f1c40f;
             }
             
-            /* Info message styling */
-            .stInfo {
+            /* Info message styling */            .stInfo {
                 background: linear-gradient(145deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
                 border: 1px solid rgba(52, 152, 219, 0.3);
                 border-radius: 10px;
                 padding: 1rem 1.25rem;
-                color: #3498db;
+                color: #5dade2;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -432,15 +420,15 @@ def load_css():
 # --- PROFESSIONAL PLOTLY FIGURE STYLING ---
 def styled_figure(fig, title, x_label, y_label, legend_title=None):
     fig.update_layout(
-        title=dict(text=title, font=dict(size=24, color='#e0e0e0')),
-        xaxis=dict(title=x_label, title_font=dict(size=16, color='#e0e0e0'), tickfont=dict(color='#e0e0e0')),
-        yaxis=dict(title=y_label, title_font=dict(size=16, color='#e0e0e0'), tickfont=dict(color='#e0e0e0')),
-        legend=dict(title=legend_title, font=dict(color='#e0e0e0'), bgcolor='rgba(0,0,0,0)'),
+        title=dict(text=title, font=dict(size=24, color='#ffffff')),
+        xaxis=dict(title=x_label, title_font=dict(size=16, color='#ffffff'), tickfont=dict(color='#f0f0f0')),
+        yaxis=dict(title=y_label, title_font=dict(size=16, color='#ffffff'), tickfont=dict(color='#f0f0f0')),
+        legend=dict(title=legend_title, font=dict(color='#ffffff'), bgcolor='rgba(0,0,0,0)'),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         margin=dict(l=50, r=50, t=80, b=50),
         template='plotly_dark',
-        hoverlabel=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
+        hoverlabel=dict(bgcolor='#23272c', font=dict(color='#ffffff'))
     )
     return fig
 
@@ -463,8 +451,8 @@ def pie_chart(df, values, names, title, legend_title=None, color_sequence=None):
                  template='plotly_dark')
     fig.update_traces(textposition='inside', textinfo='percent+label',
                       pull=[0.05]*len(df), marker=dict(line=dict(color='#23272c', width=2)))
-    fig.update_layout(title=dict(text=title, font=dict(size=24, color='#e0e0e0')),
-                      legend=dict(title=legend_title, font=dict(color='#e0e0e0'), bgcolor='#23272c'))
+    fig.update_layout(title=dict(text=title, font=dict(size=24, color='#ffffff')),
+                      legend=dict(title=legend_title, font=dict(color='#ffffff'), bgcolor='#23272c'))
     return fig
 
 def main():
