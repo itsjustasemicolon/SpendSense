@@ -213,7 +213,7 @@ ORDER BY date;
 SELECT 
     account AS card_name,
     SUM(CASE WHEN type = 'expense' THEN ABS(amount) ELSE 0 END) AS spent,
-    0 AS limit
+    50000 AS limit
 FROM transactions
 WHERE lower(account) LIKE '%credit%'
   AND date >= date_trunc('month', CURRENT_DATE)
