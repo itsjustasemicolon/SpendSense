@@ -32,6 +32,7 @@ h1 {
     font-size: 2.75em; 
     background: linear-gradient(90deg, #3a7bd5, #00d2ff);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -97,6 +98,31 @@ p, li {
 .stButton>button:active {
     transform: translateY(0);
     box-shadow: 0 4px 8px rgba(58, 123, 213, 0.2);
+}
+
+/* GitHub Footer Styling */
+.github-footer {
+    text-align: center;
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+    color: #d8e1f0;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.github-footer:hover {
+    opacity: 1;
+}
+
+.github-footer a {
+    color: #00d2ff;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.github-footer a:hover {
+    color: #3a7bd5;
+    text-decoration: underline;
 }
 
 /* Form Elements */

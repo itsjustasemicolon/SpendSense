@@ -599,9 +599,7 @@ def main():
                 except Exception as e:
                     st.error(f"Error loading transactions for {selected_date}: {str(e)}")
         except Exception as e:
-            st.error(f"Error in dashboard: {str(e)}")
-
-    # ----- DOCUMENTATION TAB -----
+            st.error(f"Error in dashboard: {str(e)}")    # ----- DOCUMENTATION TAB -----
     with tab4:
         st.subheader('Architecture Diagram')
         try:
@@ -609,13 +607,20 @@ def main():
             st.image(architecture_diagram, use_container_width=True)
         except FileNotFoundError:
             st.warning("Image not found")
-
+            
         st.subheader('How It Works')
         try:
             workflow = Image.open('images/workflow.png')
             st.image(workflow, use_container_width=True)
         except FileNotFoundError:
             st.warning("Image not found")
+
+    # ----- GITHUB FOOTER -----
+    st.markdown("""
+        <div class="github-footer">
+            Made with <span style="color: #e25555;">❤</span> by <a href="https://github.com/itsjustasemicolon" target="_blank">itsjustasemicolon</a>
+        </div>
+    """, unsafe_allow_html=True)
 
 if __name__ == '__main__':
     main()
