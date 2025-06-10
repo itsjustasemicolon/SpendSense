@@ -438,39 +438,45 @@ def main():
                     credit_cards['limit'] = credit_cards['limit'].astype(float)
                     # Add input boxes for credit limits if missing or zero
                     for idx, row in credit_cards.iterrows():
-                        if pd.isna(row['limit']) or row['limit'] == 0:
-                            limit_input = st.number_input(
-                                f"Set credit limit for {row['card_name']}",
-                                min_value=0.0,
-                                value=50000.0,  # Default placeholder value
-                                step=1000.0,
-                                key=f"limit_{row['card_name']}"
-                            )
-                            credit_cards.at[idx, 'limit'] = limit_input
+                        if row['limit'] == 0 or pd.isna(row['limit']):
+                            new_limit = st.number_input(f"Enter credit limit for {row['card_name']}", min_value=0.0, value=50000.0, step=1000.0, key=f"limit_{row['card_name']}")
+                        credit_cards.at[idx, 'limit'] = new_limit
                     credit_cards['limit_left'] = credit_cards['limit'] - credit_cards['spent']
-                    fig = px.bar(
-                        credit_cards,
-                        y='card_name',
-                        x=['spent', 'limit_left'],
+
+                    # Plot horizontal stacked bar chart
+                    import plotly.graph_objects as go
+                    fig = go.Figure()
+                    fig.add_trace(go.Bar(
+                        y=credit_cards['card_name'],
+                        x=credit_cards['spent'],
+                        name='Spent',
                         orientation='h',
-                        color_discrete_sequence=['#e57373', '#7ecfff'],
-                        labels={'value': 'Amount (₹)', 'card_name': 'Credit Card', 'variable': 'Type'},
-                        title='Monthly Spend vs Limit Left'
-                    )
+                        marker_color='#e57373',
+                        hovertemplate='Spent: ₹%{x:,.0f}<extra></extra>'
+                    ))
+                    fig.add_trace(go.Bar(
+                        y=credit_cards['card_name'],
+                        x=credit_cards['limit_left'],
+                        name='Limit Left',
+                        orientation='h',
+                        marker_color='#81c784',
+                        hovertemplate='Limit Left: ₹%{x:,.0f}<extra></extra>'
+                    ))
                     fig.update_layout(
                         barmode='stack',
-                        plot_bgcolor='rgba(0,0,0,0)',
-                        paper_bgcolor='rgba(0,0,0,0)',
+                        title='Monthly Spend vs. Limit Left by Credit Card',
                         xaxis_title='Amount (₹)',
                         yaxis_title='Credit Card',
-                        legend_title='Type',
-                        margin=dict(l=50, r=50, t=60, b=40),
-                        font=dict(color='#e0e0e0'),
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1)
                     )
                     st.plotly_chart(fig, use_container_width=True)
-                    st.dataframe(credit_cards[['card_name', 'spent', 'limit', 'limit_left']], height=300, use_container_width=True)
+
+                    # Show summary table
+                    st.dataframe(credit_cards[['card_name', 'spent', 'limit', 'limit_left']], use_container_width=True)
                 else:
-                    st.info('No credit card data available.')
+                    st.info("No credit card transactions found for this month.")
             except Exception as e:
                 st.error(f"Error loading credit card summary: {str(e)}")
 
