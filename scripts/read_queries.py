@@ -67,3 +67,6 @@ def query(query_name, **kwargs):
         
         # For other queries, re-raise the exception
         raise
+  
+        # For other queries, re-raise the exception
+        raise

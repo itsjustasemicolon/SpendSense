@@ -130,8 +130,7 @@ def load_css():
                 margin-bottom: 0.5rem;
                 display: block;
             }
-            
-            /* Expandable sections */
+              /* Expandable sections */
             .stExpander {
                 border: 1px solid #333 !important;
                 border-radius: 12px !important;
@@ -153,6 +152,36 @@ def load_css():
                 border-radius: 12px 12px 0 0 !important;
                 padding: 1rem 1.2rem !important;
                 border-bottom: 1px solid #333 !important;
+            }
+            
+            /* Sidebar expander styling */
+            [data-testid="stSidebar"] .stExpander {
+                background: linear-gradient(145deg, #1e1e1e, #252525) !important;
+                border: 1px solid #2a2a2a !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+            }
+            
+            [data-testid="stSidebar"] .stExpander:hover {
+                border-color: #3a7bd5 !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.2) !important;
+            }
+            
+            [data-testid="stSidebar"] .stExpander header {
+                background: linear-gradient(90deg, #252525, #2a2a2a) !important;
+                color: #00d2ff !important;
+                font-weight: 600 !important;
+                letter-spacing: 0.02em !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            }
+            
+            [data-testid="stSidebar"] .stExpander h5 {
+                color: #3a7bd5 !important;
+                margin-top: 1rem !important;
+                margin-bottom: 0.5rem !important;
+                font-weight: 600 !important;
             }
               /* Data tables */
             .stDataFrame {
@@ -224,19 +253,35 @@ def load_css():
                 font-size: 0.9em;
                 font-weight: 500;
             }
-            
-            /* Sidebar */
+              /* Sidebar */
             [data-testid="stSidebar"] {
                 background-color: #1a1a1a;
                 border-right: 1px solid #333;
                 padding: 2rem 1.5rem;
+                box-shadow: inset -10px 0 15px -10px rgba(0,0,0,0.3);
             }
             
             [data-testid="stSidebar"] h2, 
-            [data-testid="stSidebar"] h3, 
+            [data-testid="stSidebar"] h3 {
+                color: #fff;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 2px solid;
+                border-image: linear-gradient(90deg, #3a7bd5, #00d2ff) 1;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+            }
+            
             [data-testid="stSidebar"] .stMarkdown h6 {
                 color: #00d2ff;
                 margin-bottom: 1.5rem;
+            }
+            
+            [data-testid="stSidebar"] .stMarkdown p {
+                color: #d8e1f0;
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+                line-height: 1.5;
             }
               [data-testid="stSidebar"] .stRadio label {
                 font-weight: 500;
@@ -279,8 +324,7 @@ def load_css():
                 border-color: #3a7bd5;
                 box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
             }
-            
-            div[data-testid="stMultiSelect"] > div > div {
+              div[data-testid="stMultiSelect"] > div > div {
                 background-color: #303030;
                 border: 1px solid #444;
                 border-radius: 8px;
@@ -301,6 +345,34 @@ def load_css():
                 padding: 4px 8px;
                 font-size: 0.85rem;
                 font-weight: 500;
+            }
+            
+            /* Enhanced sidebar multiselect styling */
+            [data-testid="stSidebar"] div[data-testid="stMultiSelect"] div[data-baseweb="tag"] {
+                background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+                box-shadow: 0 2px 8px rgba(0, 210, 255, 0.25);
+                transform: translateY(0);
+                transition: all 0.2s ease;
+            }
+            
+            [data-testid="stSidebar"] div[data-testid="stMultiSelect"] div[data-baseweb="tag"]:hover {
+                box-shadow: 0 4px 12px rgba(0, 210, 255, 0.35);
+                transform: translateY(-1px);
+            }
+            
+            /* Enhanced radio button styling */
+            [data-testid="stSidebar"] .stRadio > div {
+                background: linear-gradient(145deg, #252525, #2a2a2a);
+                border-radius: 10px;
+                padding: 0.5rem;
+                margin-top: 0.5rem;
+                border: 1px solid #333;
+                transition: all 0.2s ease;
+            }
+            
+            [data-testid="stSidebar"] .stRadio > div:hover {
+                border-color: #3a7bd5;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             }
               div[data-testid="stMultiSelect"] input {
                 color: #ffffff;
@@ -458,7 +530,7 @@ def pie_chart(df, values, names, title, legend_title=None, color_sequence=None):
 def main():
     # ----- PAGE SETUP -----
     st.set_page_config(
-        page_title='Personal Finance Dashboard',
+        page_title='Spend Sense',
         page_icon=':money_with_wings:',
         layout='wide',
         initial_sidebar_state='expanded'
@@ -466,22 +538,76 @@ def main():
     load_css()
 
     # ----- TITLE & TABS -----
-    st.title('Personal Finance Dashboard')
+    st.title('Spend Sense')
     tab1, tab2, tab3, tab4 = st.tabs(['Home', 'Data', 'Dashboard', 'Documentation'])    # ----- SIDE BAR -----
     with st.sidebar:
-        st.header('Filters')
-        column_options = ['binance', 'gcash', 'grabpay', 'maya', 'ronin', 'seabank', 'shopeepay', 'unionbank', 'wallet', 'net_worth']
-        selected_columns = st.multiselect('Select accounts to display:', column_options, default=['net_worth'])
-        view = st.radio("Select view:", ["monthly", "weekly", "daily"], index=0, horizontal=True, key="sidebar")
+        st.header('Dashboard Controls')
+        
+        # Add a helpful description 
+        st.markdown("""
+            Use the filters below to customize your financial dashboard view.
+            Click on the 'Filters' section to expand options.
+        """)
+        
+        # Wrap filters in an expander that's collapsed by default
+        with st.expander("Filters", expanded=False):
+            st.markdown("##### Account Selection")
+            st.markdown("Select which accounts you want to display in the charts:")
+            
+            column_options = ['binance', 'gcash', 'grabpay', 'maya', 'ronin', 'seabank', 'shopeepay', 'unionbank', 'wallet', 'net_worth']
+            selected_columns = st.multiselect(
+                'Accounts to display:', 
+                column_options, 
+                default=['net_worth'],
+                help="Choose one or more accounts to display in the line charts. 'net_worth' shows the sum of all accounts."
+            )
+            
+            st.markdown("---")
+            st.markdown("##### Time Period")
+            st.markdown("Choose how to group your financial data:")
+            
+            view = st.radio(
+                "Select view:", 
+                ["monthly", "weekly", "daily"], 
+                index=0, 
+                horizontal=True, 
+                key="sidebar",
+                help="Monthly view is best for long-term trends, weekly for medium-term patterns, and daily for detailed analysis."
+            )
+        
+        # Add a quick help section
+        with st.expander("Quick Tips", expanded=False):
+            st.markdown("""
+                ##### Dashboard Navigation
+                - **Home Tab**: Project overview and motivation
+                - **Data Tab**: Upload and view your financial data
+                - **Dashboard Tab**: Interactive charts and visualizations
+                - **Documentation Tab**: Technical details and workflow
+                
+                ##### Useful Features
+                - Hover over charts for detailed information
+                - Click legends to toggle data series
+                - Use the Credit Card Summary to track spending limits
+                - View daily transactions with the calendar picker
+            """)
+        
+        # Add a footer with app information
+        st.markdown("---")
+        st.markdown("""
+            <div style="text-align: center; padding: 10px; opacity: 0.7;">
+                <p style="font-size: 0.8rem;"> SpendSense</p>
+                <p style="font-size: 0.7rem;">v1.0.0</p>
+            </div>
+        """, unsafe_allow_html=True)
 
     # ----- HOME TAB -----
     with tab1:
         with st.container():
             st.subheader('Project Overview')
             st.markdown("""
-                The Personal Finance Dashboard takes your expenditure data from the Bluecoins app and transforms it 
+                SpendSense takes your expenditure data from the Bluecoins app and transforms it 
                 into an interactive dashboard to help you manage your money better. Bluecoins is an expense tracking 
-                app that lets you export your financial records as a CSV file. The Personal Finance Dashboard accepts 
+                app that lets you export your financial records as a CSV file. SpendSense accepts 
                 this file—or any other CSV file with a similar format—to generate detailed analytics, so you can see 
                 exactly where your rupees are going and make smarter budgeting decisions.
             """)
