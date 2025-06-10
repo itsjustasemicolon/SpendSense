@@ -9,198 +9,422 @@ from PIL import Image
 def load_css():
     st.markdown("""
         <style>
+            /* Modern Professional Theme for Finance Dashboard */
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+            
             body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                color: #e0e0e0;
-                background-color: #181a1b;
-                -webkit-font-smoothing: antialiased; /* Added for smoother fonts */
-                -moz-osx-font-smoothing: grayscale; /* Added for smoother fonts */
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                color: #f0f2f5;
+                background-color: #121212;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                line-height: 1.5;
+                letter-spacing: 0.01em;
             }
+            
+            /* Main Container Styling */
             .main .block-container {
-                background: #23272c;
+                background: #1e1e1e;
                 border-radius: 12px;
-                padding: 2rem 1.5rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.18); /* Modified for a softer shadow */
+                padding: 2.5rem 2rem;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+                max-width: 1280px;
+                margin: 0 auto;
             }
+            
+            /* Headings */
             h1, h2, h3, h4, h5, h6 {
-                color: #e0e0e0;
+                color: #f0f2f5;
                 font-weight: 700;
+                letter-spacing: -0.01em;
+                margin-bottom: 0.8em;
             }
-            h1 { font-size: 2.5em; margin-bottom: 0.5em; }
-            h2 { font-size: 2em; margin-bottom: 0.4em; }
-            h3 { font-size: 1.75em; margin-bottom: 0.3em; }
-            h6 { font-size: 1.25em; margin-bottom: 0.2em; color: #7ecfff; }
+            
+            h1 { 
+                font-size: 2.75em; 
+                background: linear-gradient(90deg, #3a7bd5, #00d2ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            
+            h2 { font-size: 2.25em; color: #fff; }
+            h3 { font-size: 1.75em; color: #fff; }
+            h4 { font-size: 1.5em; color: #3a7bd5; }
+            h5 { font-size: 1.25em; color: #3a7bd5; }
+            h6 { font-size: 1em; color: #00d2ff; margin-bottom: 0.4em; }
+            
+            p, li {
+                font-size: 1rem;
+                line-height: 1.6;
+                color: #b0b7c3;
+            }
+            
+            /* Card-like styling for containers */
+            .stMarkdown {
+                line-height: 1.6;
+            }
+            
+            /* Tab Navigation */
             .stTabs [data-baseweb="tab-list"] {
-                gap: 12px;
+                gap: 2px;
+                background-color: #252525;
+                padding: 4px;
+                border-radius: 8px;
             }
+            
             .stTabs [data-baseweb="tab"] {
-                height: 44px;
-                background-color: #23272c;
-                border-radius: 6px 6px 0 0;
-                padding: 10px 16px;
-                color: #b0b8c1;
+                height: 48px;
+                background-color: #252525;
+                border-radius: 6px;
+                padding: 0 20px;
+                color: #b0b7c3;
                 font-weight: 500;
-                transition: background-color 0.3s ease, color 0.3s ease; /* Added transition */
+                transition: all 0.2s ease;
+                border: none !important;
             }
+            
             .stTabs [aria-selected="true"] {
-                background-color: #1a73e8;
+                background: linear-gradient(135deg, #3a7bd5, #00d2ff);
                 color: #fff;
-                font-weight: 700;
-            }
-            .stButton>button {
-                border: 2px solid #1a73e8;
-                border-radius: 0.375rem;
-                color: #1a73e8;
-                background-color: #23272c;
-                padding: 0.5rem 1rem;
                 font-weight: 600;
-                transition: all 0.2s;
+                box-shadow: 0 4px 12px rgba(0, 210, 255, 0.25);
             }
+            
+            /* Buttons */
+            .stButton>button {
+                background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 0.6rem 1.2rem;
+                font-weight: 600;
+                letter-spacing: 0.01em;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 12px rgba(58, 123, 213, 0.2);
+            }
+            
             .stButton>button:hover {
-                border-color: #7ecfff;
-                color: #23272c;
-                background-color: #7ecfff;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 16px rgba(58, 123, 213, 0.3);
             }
+            
             .stButton>button:active {
-                border-color: #0056b3 !important;
-                background-color: #0056b3 !important;
-                color: #fff !important;
+                transform: translateY(0);
+                box-shadow: 0 4px 8px rgba(58, 123, 213, 0.2);
             }
-            .stFileUploader label, .stDateInput label, .stRadio label, .stMultiSelect label {
+            
+            /* Form Elements */
+            .stFileUploader, .stDateInput, .stRadio, .stMultiSelect, .stSelectbox {
+                background: #252525;
+                padding: 1rem;
+                border-radius: 12px;
+                border: 1px solid #333;
+                margin-bottom: 1rem;
+                transition: all 0.2s ease;
+            }
+            
+            .stFileUploader:hover, .stDateInput:hover, .stRadio:hover, .stMultiSelect:hover, .stSelectbox:hover {
+                border-color: #3a7bd5;
+                box-shadow: 0 0 0 1px rgba(58, 123, 213, 0.2);
+            }
+            
+            .stFileUploader label, .stDateInput label, .stRadio label, .stMultiSelect label, .stSelectbox label {
                 font-weight: 500;
-                color: #7ecfff;
+                color: #00d2ff;
+                margin-bottom: 0.5rem;
+                display: block;
             }
+            
+            /* Expandable sections */
             .stExpander {
                 border: 1px solid #333 !important;
-                border-radius: 0.375rem !important;
-                margin-bottom: 1rem !important;
-                background: #23272c !important;
+                border-radius: 12px !important;
+                margin-bottom: 1.5rem !important;
+                background: #252525 !important;
+                overflow: hidden !important;
+                transition: all 0.2s ease !important;
             }
+            
+            .stExpander:hover {
+                border-color: #3a7bd5 !important;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            }
+            
             .stExpander header {
-                background-color: #23272c !important;
-                color: #7ecfff !important;
+                background-color: #252525 !important;
+                color: #00d2ff !important;
                 font-weight: 600 !important;
-                border-radius: 0.375rem 0.375rem 0 0 !important;
-                padding: 0.75rem 1rem !important;
+                border-radius: 12px 12px 0 0 !important;
+                padding: 1rem 1.2rem !important;
+                border-bottom: 1px solid #333 !important;
             }
+            
+            /* Data tables */
             .stDataFrame {
                 border: 1px solid #333;
-                border-radius: 0.375rem;
-                background: #23272c;
+                border-radius: 12px;
+                background: #252525;
+                overflow: hidden;
             }
+            
             .stDataFrame thead th {
-                background-color: #23272c;
-                color: #7ecfff;
-                font-weight: 700;
+                background-color: #2a2a2a;
+                color: #00d2ff;
+                font-weight: 600;
                 text-align: left;
+                padding: 0.75rem 1rem !important;
+                border-bottom: 2px solid #333;
             }
+            
             .stDataFrame tbody tr {
-                background-color: #23272c;
-                color: #e0e0e0;
+                background-color: #252525;
+                color: #f0f2f5;
+                border-bottom: 1px solid #333;
+                transition: background-color 0.15s ease;
             }
+            
             .stDataFrame tbody tr:nth-child(even) {
-                background-color: #202124;
+                background-color: #2a2a2a;
             }
+            
             .stDataFrame tbody tr:hover {
-                background-color: #1a1d1f;
+                background-color: #303030;
             }
+            
+            .stDataFrame td {
+                padding: 0.75rem 1rem !important;
+            }
+            
+            /* Metrics */
             [data-testid="stMetric"] {
-                background-color: #23272c;
+                background: linear-gradient(145deg, #252525, #2a2a2a);
+                border-radius: 12px;
+                padding: 1.25rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
                 border: 1px solid #333;
-                border-radius: 0.375rem;
-                padding: 1rem;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
+            
+            [data-testid="stMetric"]:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+                border-color: #3a7bd5;
+            }
+            
             [data-testid="stMetricLabel"] {
                 font-weight: 600;
-                color: #7ecfff;
+                color: #00d2ff;
+                font-size: 0.95rem;
+                letter-spacing: 0.02em;
+                margin-bottom: 0.5rem;
             }
+            
             [data-testid="stMetricValue"] {
-                font-size: 2em;
+                font-size: 2.25em;
                 font-weight: 700;
-                color: #e0e0e0;
+                color: #fff;
+                letter-spacing: -0.02em;
             }
+            
             [data-testid="stMetricDelta"] {
                 font-size: 0.9em;
+                font-weight: 500;
             }
+            
+            /* Sidebar */
             [data-testid="stSidebar"] {
-                background-color: #23272c;
-                padding: 1rem;
+                background-color: #1a1a1a;
+                border-right: 1px solid #333;
+                padding: 2rem 1.5rem;
             }
-            [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] .stMarkdown h6 {
-                 color: #7ecfff;
+            
+            [data-testid="stSidebar"] h2, 
+            [data-testid="stSidebar"] h3, 
+            [data-testid="stSidebar"] .stMarkdown h6 {
+                color: #00d2ff;
+                margin-bottom: 1.5rem;
             }
+            
+            [data-testid="stSidebar"] .stRadio label {
+                font-weight: 500;
+                color: #f0f2f5;
+            }
+            
             /* Hide default Streamlit menu and footer */
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
-
-            /* Added: Input fields and scrollbar styling */
+            
+            /* Input fields styling */
             div[data-testid="stDateInput"] input,
             div[data-testid="stTextInput"] input,
             div[data-testid="stNumberInput"] input {
-                background-color: #2a2f35;
-                color: #e0e0e0;
-                border: 1px solid #4a4f55;
-                border-radius: 0.375rem; /* 6px */
-                padding: 8px 12px;
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                background-color: #303030;
+                color: #f0f2f5;
+                border: 1px solid #444;
+                border-radius: 8px;
+                padding: 10px 14px;
+                font-size: 0.95rem;
+                transition: all 0.2s ease;
             }
+            
             div[data-testid="stDateInput"] input:focus,
             div[data-testid="stTextInput"] input:focus,
             div[data-testid="stNumberInput"] input:focus {
-                border-color: #1a73e8;
-                box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+                border-color: #3a7bd5;
+                box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
+                outline: none;
             }
+            
             div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
-                background-color: #2a2f35;
-                color: #e0e0e0;
-                border: 1px solid #4a4f55;
-                border-radius: 0.375rem;
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                background-color: #303030;
+                color: #f0f2f5;
+                border: 1px solid #444;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-size: 0.95rem;
             }
+            
             div[data-testid="stSelectbox"] div[data-baseweb="select"] > div:focus-within {
-                 border-color: #1a73e8;
-                 box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+                border-color: #3a7bd5;
+                box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
             }
-            div[data-testid="stMultiSelect"] > div > div { /* Targets the component's main interactive area */
-                background-color: #2a2f35;
-                border: 1px solid #4a4f55;
-                border-radius: 0.375rem;
-                padding: 2px; /* Add a little padding to contain tags better */
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            
+            div[data-testid="stMultiSelect"] > div > div {
+                background-color: #303030;
+                border: 1px solid #444;
+                border-radius: 8px;
+                padding: 4px;
+                transition: all 0.2s ease;
             }
+            
             div[data-testid="stMultiSelect"] > div > div:focus-within {
-                 border-color: #1a73e8;
-                 box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+                border-color: #3a7bd5;
+                box-shadow: 0 0 0 3px rgba(58, 123, 213, 0.2);
             }
-            div[data-testid="stMultiSelect"] div[data-baseweb="tag"] { /* Styles individual tags */
-                background-color: #1a73e8;
+            
+            div[data-testid="stMultiSelect"] div[data-baseweb="tag"] {
+                background: linear-gradient(135deg, #3a7bd5, #00d2ff);
                 color: #ffffff;
-                border-radius: 4px; /* Slightly smaller radius for tags */
-                margin: 2px; /* Spacing between tags */
-                padding: 2px 6px; /* Padding within tags */
+                border-radius: 6px;
+                margin: 3px;
+                padding: 4px 8px;
+                font-size: 0.85rem;
+                font-weight: 500;
             }
-            div[data-testid="stMultiSelect"] input { /* Styles the input field within the multiselect */
-                color: #e0e0e0; /* Ensure input text color is consistent */
-                padding: 4px; /* Add some padding to the input field */
+            
+            div[data-testid="stMultiSelect"] input {
+                color: #f0f2f5;
+                padding: 6px;
+                font-size: 0.95rem;
             }
-
-            /* Added: Custom Scrollbar for Webkit browsers */
+            
+            /* Custom Scrollbar */
             ::-webkit-scrollbar {
                 width: 10px;
                 height: 10px;
             }
+            
             ::-webkit-scrollbar-track {
-                background: #181a1b; /* Match body background */
+                background: #1a1a1a;
                 border-radius: 10px;
             }
+            
             ::-webkit-scrollbar-thumb {
-                background: #4a4f55;
+                background: #444;
                 border-radius: 10px;
-                border: 2px solid #181a1b; /* Creates a 'floating' thumb effect */
+                border: 2px solid #1a1a1a;
+                transition: background 0.2s ease;
             }
+            
             ::-webkit-scrollbar-thumb:hover {
-                background: #5a5f65;
+                background: #555;
+            }
+            
+            /* Plotly Charts Styling */
+            .js-plotly-plot .plotly .main-svg {
+                background-color: transparent !important;
+            }
+            
+            .js-plotly-plot .plotly .modebar {
+                background-color: rgba(26, 26, 26, 0.7) !important;
+                border-radius: 8px !important;
+            }
+            
+            .js-plotly-plot .plotly .modebar-btn path {
+                fill: #00d2ff !important;
+            }
+            
+            /* Credit Card Section Styling */
+            .credit-card-section {
+                margin-top: 1.5rem;
+                margin-bottom: 2.5rem;
+            }
+            
+            .credit-card-item {
+                background: linear-gradient(145deg, #252525, #2a2a2a);
+                border-radius: 16px;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+                border: 1px solid #333;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            
+            .credit-card-item:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+                border-color: #3a7bd5;
+            }
+            
+            .credit-card-header {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #fff;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid #444;
+                padding-bottom: 0.75rem;
+            }
+            
+            /* Progress bars */
+            .stProgress > div > div > div > div {
+                background-color: #3a7bd5 !important;
+                background: linear-gradient(90deg, #3a7bd5, #00d2ff) !important;
+            }
+            
+            /* Success message styling */
+            .stSuccess {
+                background: linear-gradient(145deg, rgba(41, 171, 135, 0.1), rgba(41, 171, 135, 0.2));
+                border: 1px solid rgba(41, 171, 135, 0.3);
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                color: #2ecc71;
+            }
+            
+            /* Error message styling */
+            .stError {
+                background: linear-gradient(145deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.2));
+                border: 1px solid rgba(231, 76, 60, 0.3);
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                color: #e74c3c;
+            }
+            
+            /* Warning message styling */
+            .stWarning {
+                background: linear-gradient(145deg, rgba(241, 196, 15, 0.1), rgba(241, 196, 15, 0.2));
+                border: 1px solid rgba(241, 196, 15, 0.3);
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                color: #f1c40f;
+            }
+            
+            /* Info message styling */
+            .stInfo {
+                background: linear-gradient(145deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2));
+                border: 1px solid rgba(52, 152, 219, 0.3);
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+                color: #3498db;
             }
         </style>
     """, unsafe_allow_html=True)
@@ -248,7 +472,8 @@ def main():
     st.set_page_config(
         page_title='Personal Finance Dashboard',
         page_icon=':money_with_wings:',
-        layout='wide'
+        layout='wide',
+        initial_sidebar_state='expanded'
     )
     load_css()
 
@@ -566,7 +791,94 @@ def main():
             if selected_date:
                 try:
                     day_transactions = query("transactions_by_date", date=selected_date)
-                    st.dataframe(day_transactions, height=400, use_container_width=True)
+                    
+                    # Create bar graphs for income and expense transactions of the selected day
+                    if not day_transactions.empty:
+                        # Create a copy to avoid modifying the original dataframe
+                        day_transactions_analysis = day_transactions.copy()
+                        
+                        # Display the transactions table
+                        st.dataframe(day_transactions, height=400, use_container_width=True)
+                        
+                        # Split transactions into income and expense
+                        st.markdown("### Transactions Summary for Selected Day")
+                        daily_bar_cols = st.columns(2)
+                        
+                        with daily_bar_cols[0]:
+                            # Income transactions
+                            income_transactions = day_transactions_analysis[day_transactions_analysis['type'] == 'income']
+                            if not income_transactions.empty:
+                                # Group by category for visualization
+                                income_by_category = income_transactions.groupby('category')['amount'].sum().reset_index()
+                                income_by_category['amount'] = income_by_category['amount'].abs()  # Ensure positive values
+                                
+                                fig_income = px.bar(
+                                    income_by_category,
+                                    x='category',
+                                    y='amount',
+                                    title=f'Income on {selected_date.strftime("%d %b, %Y")}',
+                                    color_discrete_sequence=['#81c784'],  # Green shade for income
+                                    template='plotly_dark'
+                                )
+                                fig_income = styled_figure(
+                                    fig_income, 
+                                    f'Income on {selected_date.strftime("%d %b, %Y")}', 
+                                    'Category', 
+                                    'Amount (₹)'
+                                )
+                                st.plotly_chart(fig_income, use_container_width=True)
+                                
+                                # Show total income
+                                total_income = income_by_category['amount'].sum()
+                                st.metric("Total Income", f"₹{total_income:,.2f}", delta_color="normal")
+                            else:
+                                st.info(f"No income transactions found on {selected_date.strftime('%d %b, %Y')}")
+                        
+                        with daily_bar_cols[1]:
+                            # Expense transactions
+                            expense_transactions = day_transactions_analysis[day_transactions_analysis['type'] == 'expense']
+                            if not expense_transactions.empty:
+                                # Group by category for visualization
+                                expense_by_category = expense_transactions.groupby('category')['amount'].sum().reset_index()
+                                expense_by_category['amount'] = expense_by_category['amount'].abs()  # Convert to positive for visualization
+                                
+                                fig_expense = px.bar(
+                                    expense_by_category,
+                                    x='category',
+                                    y='amount',
+                                    title=f'Expenses on {selected_date.strftime("%d %b, %Y")}',
+                                    color_discrete_sequence=['#e57373'],  # Red shade for expenses
+                                    template='plotly_dark'
+                                )
+                                fig_expense = styled_figure(
+                                    fig_expense, 
+                                    f'Expenses on {selected_date.strftime("%d %b, %Y")}', 
+                                    'Category', 
+                                    'Amount (₹)'
+                                )
+                                st.plotly_chart(fig_expense, use_container_width=True)
+                                
+                                # Show total expense
+                                total_expense = expense_by_category['amount'].sum()
+                                st.metric("Total Expenses", f"₹{total_expense:,.2f}", delta_color="inverse")
+                            else:
+                                st.info(f"No expense transactions found on {selected_date.strftime('%d %b, %Y')}")
+                        
+                        # Net cashflow for the day
+                        if not income_transactions.empty or not expense_transactions.empty:
+                            total_income = income_transactions['amount'].sum() if not income_transactions.empty else 0
+                            total_expense = expense_transactions['amount'].abs().sum() if not expense_transactions.empty else 0
+                            net_cashflow = total_income - total_expense
+                            
+                            delta_color = "normal" if net_cashflow >= 0 else "inverse"
+                            st.metric(
+                                label=f"Net Cashflow on {selected_date.strftime('%d %b, %Y')}", 
+                                value=f"₹{net_cashflow:,.2f}", 
+                                delta_color=delta_color
+                            )
+                    else:
+                        st.info(f"No transactions found for {selected_date.strftime('%d %b, %Y')}")
+                    
                 except Exception as e:
                     st.error(f"Error loading transactions for {selected_date}: {str(e)}")
         except Exception as e:
