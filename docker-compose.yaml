@@ -10,6 +10,7 @@ services:
     volumes:
       - ./scripts:/app/scripts
       - ./images:/app/images
+      - ./styles:/app/styles
 
   postgres:
     image: postgres
