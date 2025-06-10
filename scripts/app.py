@@ -637,7 +637,57 @@ def main():
                     'Receiving Methods', 'Account', 'Amount (₹)'
                 )
                 st.plotly_chart(fig, use_container_width=True)
-            st.markdown("---")            # Credit Card Summary Section
+            st.markdown("---")            # Expenses & Income by Category (Pie Charts)
+            c1, c2 = st.columns(2)
+            with c1:
+                expenses_per_category = query("expenses_per_category")
+                fig = pie_chart(
+                    expenses_per_category, 'expenses', 'category',
+                    'Expenses Per Category', 'Category', px.colors.sequential.RdPu_r
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            with c2:
+                income_per_category = query("income_per_category")
+                fig = pie_chart(
+                    income_per_category, 'income', 'category',
+                    'Income Per Category', 'Category', px.colors.sequential.GnBu_r
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            st.markdown("---")
+
+            # Top Expenses & Income Sources (Tables)
+            d1, d2 = st.columns(2)
+            with d1:
+                st.markdown("###### Top Expenses")
+                st.dataframe(expenses_per_category, height=400, use_container_width=True)
+            with d2:
+                st.markdown("###### Top Income Sources")
+                st.dataframe(income_per_category, height=400, use_container_width=True)
+            st.markdown("---")
+
+            # Expenses Over Time
+            if view == 'monthly':
+                monthly_expenses = query("monthly_expenses")
+                fig = line_chart(
+                    monthly_expenses, 'month', 'expenses',
+                    'Monthly Expenses', 'Month', 'Amount (₹)'
+                )
+            elif view == "weekly":
+                weekly_expenses = query("weekly_expenses")
+                fig = line_chart(
+                    weekly_expenses, 'week', 'expenses',
+                    'Weekly Expenses', 'Week', 'Amount (₹)'
+                )
+            elif view == "daily":
+                daily_expenses = query("daily_expenses")
+                fig = line_chart(
+                    daily_expenses, 'day', 'expenses',
+                    'Daily Expenses', 'Day', 'Amount (₹)'
+                )
+            st.plotly_chart(fig, use_container_width=True)
+            st.markdown("---")
+
+            # Credit Card Summary Section
             st.subheader("Credit Card Summary")
             try:
                 # Execute the query with enhanced error handling
@@ -776,56 +826,6 @@ def main():
                 st.error(f"Error loading credit card summary: {str(e)}")
                 import traceback
                 st.error(traceback.format_exc())
-            st.markdown("---")
-
-            # Expenses & Income by Category (Pie Charts)
-            c1, c2 = st.columns(2)
-            with c1:
-                expenses_per_category = query("expenses_per_category")
-                fig = pie_chart(
-                    expenses_per_category, 'expenses', 'category',
-                    'Expenses Per Category', 'Category', px.colors.sequential.RdPu_r
-                )
-                st.plotly_chart(fig, use_container_width=True)
-            with c2:
-                income_per_category = query("income_per_category")
-                fig = pie_chart(
-                    income_per_category, 'income', 'category',
-                    'Income Per Category', 'Category', px.colors.sequential.GnBu_r
-                )
-                st.plotly_chart(fig, use_container_width=True)
-            st.markdown("---")
-
-            # Top Expenses & Income Sources (Tables)
-            d1, d2 = st.columns(2)
-            with d1:
-                st.markdown("###### Top Expenses")
-                st.dataframe(expenses_per_category, height=400, use_container_width=True)
-            with d2:
-                st.markdown("###### Top Income Sources")
-                st.dataframe(income_per_category, height=400, use_container_width=True)
-            st.markdown("---")
-
-            # Expenses Over Time
-            if view == 'monthly':
-                monthly_expenses = query("monthly_expenses")
-                fig = line_chart(
-                    monthly_expenses, 'month', 'expenses',
-                    'Monthly Expenses', 'Month', 'Amount (₹)'
-                )
-            elif view == "weekly":
-                weekly_expenses = query("weekly_expenses")
-                fig = line_chart(
-                    weekly_expenses, 'week', 'expenses',
-                    'Weekly Expenses', 'Week', 'Amount (₹)'
-                )
-            elif view == "daily":
-                daily_expenses = query("daily_expenses")
-                fig = line_chart(
-                    daily_expenses, 'day', 'expenses',
-                    'Daily Expenses', 'Day', 'Amount (₹)'
-                )
-            st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
 
             # Calendar Day Picker
