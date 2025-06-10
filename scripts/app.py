@@ -13,12 +13,14 @@ def load_css():
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 color: #e0e0e0;
                 background-color: #181a1b;
+                -webkit-font-smoothing: antialiased; /* Added for smoother fonts */
+                -moz-osx-font-smoothing: grayscale; /* Added for smoother fonts */
             }
             .main .block-container {
                 background: #23272c;
                 border-radius: 12px;
                 padding: 2rem 1.5rem;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.18); /* Modified for a softer shadow */
             }
             h1, h2, h3, h4, h5, h6 {
                 color: #e0e0e0;
@@ -38,6 +40,7 @@ def load_css():
                 padding: 10px 16px;
                 color: #b0b8c1;
                 font-weight: 500;
+                transition: background-color 0.3s ease, color 0.3s ease; /* Added transition */
             }
             .stTabs [aria-selected="true"] {
                 background-color: #1a73e8;
@@ -130,6 +133,75 @@ def load_css():
             /* Hide default Streamlit menu and footer */
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
+
+            /* Added: Input fields and scrollbar styling */
+            div[data-testid="stDateInput"] input,
+            div[data-testid="stTextInput"] input,
+            div[data-testid="stNumberInput"] input {
+                background-color: #2a2f35;
+                color: #e0e0e0;
+                border: 1px solid #4a4f55;
+                border-radius: 0.375rem; /* 6px */
+                padding: 8px 12px;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            }
+            div[data-testid="stDateInput"] input:focus,
+            div[data-testid="stTextInput"] input:focus,
+            div[data-testid="stNumberInput"] input:focus {
+                border-color: #1a73e8;
+                box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+            }
+            div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+                background-color: #2a2f35;
+                color: #e0e0e0;
+                border: 1px solid #4a4f55;
+                border-radius: 0.375rem;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            }
+            div[data-testid="stSelectbox"] div[data-baseweb="select"] > div:focus-within {
+                 border-color: #1a73e8;
+                 box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+            }
+            div[data-testid="stMultiSelect"] > div > div { /* Targets the component's main interactive area */
+                background-color: #2a2f35;
+                border: 1px solid #4a4f55;
+                border-radius: 0.375rem;
+                padding: 2px; /* Add a little padding to contain tags better */
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            }
+            div[data-testid="stMultiSelect"] > div > div:focus-within {
+                 border-color: #1a73e8;
+                 box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25);
+            }
+            div[data-testid="stMultiSelect"] div[data-baseweb="tag"] { /* Styles individual tags */
+                background-color: #1a73e8;
+                color: #ffffff;
+                border-radius: 4px; /* Slightly smaller radius for tags */
+                margin: 2px; /* Spacing between tags */
+                padding: 2px 6px; /* Padding within tags */
+            }
+            div[data-testid="stMultiSelect"] input { /* Styles the input field within the multiselect */
+                color: #e0e0e0; /* Ensure input text color is consistent */
+                padding: 4px; /* Add some padding to the input field */
+            }
+
+            /* Added: Custom Scrollbar for Webkit browsers */
+            ::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #181a1b; /* Match body background */
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #4a4f55;
+                border-radius: 10px;
+                border: 2px solid #181a1b; /* Creates a 'floating' thumb effect */
+            }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #5a5f65;
+            }
         </style>
     """, unsafe_allow_html=True)
     st.markdown(
@@ -143,9 +215,9 @@ def styled_figure(fig, title, x_label, y_label, legend_title=None):
         title=dict(text=title, font=dict(size=24, color='#e0e0e0')),
         xaxis=dict(title=x_label, title_font=dict(size=16, color='#e0e0e0'), tickfont=dict(color='#e0e0e0')),
         yaxis=dict(title=y_label, title_font=dict(size=16, color='#e0e0e0'), tickfont=dict(color='#e0e0e0')),
-        legend=dict(title=legend_title, font=dict(color='#e0e0e0'), bgcolor='#23272c'),
-        plot_bgcolor='#23272c',
-        paper_bgcolor='#23272c',
+        legend=dict(title=legend_title, font=dict(color='#e0e0e0'), bgcolor='rgba(0,0,0,0)'),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
         margin=dict(l=50, r=50, t=80, b=50),
         template='plotly_dark',
         hoverlabel=dict(bgcolor='#23272c', font=dict(color='#e0e0e0'))
@@ -342,34 +414,6 @@ def main():
                     st.error(f"Error loading monthly cash flow: {str(e)}")
             st.markdown("---")
 
-            # Recent Net Daily Summary (Last 7 Days)
-            daily_summary_30 = query("daily_net_summary_last_n_days")
-            daily_summary_30['date'] = pd.to_datetime(daily_summary_30['date'])
-            today = pd.Timestamp.today().normalize()
-            last_7_dates = pd.date_range(end=today, periods=7)
-            daily_summary_7 = pd.DataFrame({'date': last_7_dates})
-            daily_summary_7 = daily_summary_7.merge(
-                daily_summary_30[['date', 'net_amount']], on='date', how='left'
-            ).fillna(0)
-            daily_summary_7['day'] = daily_summary_7['date'].dt.strftime('%a')
-            avg_7 = daily_summary_7['net_amount'].mean()
-            avg_30 = daily_summary_30['net_amount'].mean()
-
-            fig = bar_chart(
-                daily_summary_7, 'day', 'net_amount',
-                'Daily Net Amount (Last 7 Days)', 'Day', 'Net Amount (₹)'
-            )
-            fig.add_hline(
-                y=avg_7, line_dash='dash', line_color='#7ecfff',
-                annotation_text='7-day avg', annotation_position='top left'
-            )
-            fig.add_hline(
-                y=avg_30, line_dash='dash', line_color='#1a73e8',
-                annotation_text='30-day avg', annotation_position='bottom left'
-            )
-            st.plotly_chart(fig, use_container_width=True)
-            st.markdown("---")
-
             # Payment & Receiving Methods
             b1, b2 = st.columns(2)
             with b1:
@@ -387,6 +431,50 @@ def main():
                 )
                 st.plotly_chart(fig, use_container_width=True)
             st.markdown("---")
+
+            # Credit Card Summary Section
+            st.subheader("Credit Card Summary")
+            try:
+                # Query should return columns: card_name, spent, limit
+                credit_cards = query("credit_card_summary")
+                if not credit_cards.empty:
+                    # Add input boxes for credit limits if missing or zero
+                    for idx, row in credit_cards.iterrows():
+                        if not row['limit'] or row['limit'] == 0:
+                            limit_input = st.number_input(
+                                f"Set credit limit for {row['card_name']}",
+                                min_value=0.0,
+                                value=50000.0,  # Default placeholder value
+                                step=1000.0,
+                                key=f"limit_{row['card_name']}"
+                            )
+                            credit_cards.at[idx, 'limit'] = limit_input
+                    credit_cards['limit_left'] = credit_cards['limit'] - credit_cards['spent']
+                    fig = px.bar(
+                        credit_cards,
+                        y='card_name',
+                        x=['spent', 'limit_left'],
+                        orientation='h',
+                        color_discrete_sequence=['#e57373', '#7ecfff'],
+                        labels={'value': 'Amount (₹)', 'card_name': 'Credit Card', 'variable': 'Type'},
+                        title='Monthly Spend vs Limit Left'
+                    )
+                    fig.update_layout(
+                        barmode='stack',
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        xaxis_title='Amount (₹)',
+                        yaxis_title='Credit Card',
+                        legend_title='Type',
+                        margin=dict(l=50, r=50, t=60, b=40),
+                        font=dict(color='#e0e0e0'),
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+                    st.dataframe(credit_cards[['card_name', 'spent', 'limit', 'limit_left']], height=300, use_container_width=True)
+                else:
+                    st.info('No credit card data available.')
+            except Exception as e:
+                st.error(f"Error loading credit card summary: {str(e)}")
 
             # Expenses & Income by Category (Pie Charts)
             c1, c2 = st.columns(2)
