@@ -213,8 +213,13 @@ ORDER BY date;
 SELECT 
     account AS card_name,
     CAST(COALESCE(SUM(CASE WHEN type = 'expense' THEN ABS(amount) ELSE 0 END), 0) AS FLOAT) AS spent,
-    CAST(50000 AS FLOAT) AS "limit"
+    CAST(1500 AS FLOAT) AS "limit"
 FROM transactions
-WHERE lower(account) LIKE '%credit%'
+WHERE (lower(account) LIKE '%credit%' 
+       OR lower(account) LIKE '%visa%'
+       OR lower(account) LIKE '%mastercard%'
+       OR lower(account) LIKE '%amex%'
+       OR lower(account) LIKE '%american express%'
+       OR lower(account) LIKE '%discover%')
   AND date >= date_trunc('month', CURRENT_DATE)
 GROUP BY account;

@@ -38,7 +38,7 @@ def query(query_name, **kwargs):
                     if 'spent' in df.columns:
                         df['spent'] = pd.to_numeric(df['spent'], errors='coerce').fillna(0.0)
                     if 'limit' in df.columns:
-                        df['limit'] = pd.to_numeric(df['limit'], errors='coerce').fillna(50000.0)
+                        df['limit'] = pd.to_numeric(df['limit'], errors='coerce').fillna(1500.0)
                     
                     df.index = range(1, len(df) + 1)
                     return df
