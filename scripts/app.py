@@ -592,19 +592,44 @@ def main():
                                 label=f"Net Cashflow on {selected_date.strftime('%d %b, %Y')}", 
                                 value=f"₹{net_cashflow:,.2f}", 
                                 delta_color=delta_color
-                            )
+                            )                    
                     else:
                         st.info(f"No transactions found for {selected_date.strftime('%d %b, %Y')}")
                     
                 except Exception as e:
                     st.error(f"Error loading transactions for {selected_date}: {str(e)}")
         except Exception as e:
-            st.error(f"Error in dashboard: {str(e)}")    # ----- DOCUMENTATION TAB -----
+            st.error(f"Error in dashboard: {str(e)}")
+
+    # ----- DOCUMENTATION TAB -----
     with tab4:
         st.subheader('Architecture Diagram')
         try:
             architecture_diagram = Image.open('images/Architecture Diagram.jpg')
             st.image(architecture_diagram, use_container_width=True)
+            
+            # Add a detailed explanation of the architecture
+            st.markdown("""
+                ### System Architecture Overview
+                
+                This finance dashboard uses a modern data processing pipeline architecture to transform raw financial data into 
+                interactive visualizations. Here's how the components work together:
+                
+                #### Data Layer
+                - **PostgreSQL Database**: Stores both raw and transformed transaction data in normalized tables
+                - **SQLAlchemy ORM**: Provides Python interface to the database, handling connections and queries
+                - **Data Transformation Pipeline**: Cleans, validates, and structures the raw transaction data
+                
+                #### Application Layer
+                - **Streamlit Framework**: Powers the interactive web interface and visualization components
+                - **Plotly**: Creates responsive, interactive charts and graphs
+                - **Pandas**: Handles data manipulation, aggregation, and transformation
+                
+                #### Deployment
+                - **Docker**: Containerizes the application and database for consistent deployment
+                - **Docker Compose**: Orchestrates the multi-container setup, handling networking and persistence
+                - **Volume Mapping**: Ensures data persistence across container restarts
+            """)
         except FileNotFoundError:
             st.warning("Image not found")
             
@@ -612,8 +637,89 @@ def main():
         try:
             workflow = Image.open('images/workflow.png')
             st.image(workflow, use_container_width=True)
+            
+            # Add a detailed explanation of the workflow
+            st.markdown("""
+                ### Data Processing Workflow
+                
+                The SpendSense application follows a robust ETL (Extract, Transform, Load) process to handle your financial data:
+                
+                #### 1. Data Extraction
+                - Upload your Bluecoins CSV export through the user interface
+                - The system parses the file and extracts all transaction records
+                - Raw data is stored temporarily for validation
+                
+                #### 2. Data Transformation
+                - **Cleaning**: Remove duplicates, handle missing values, and standardize formats
+                - **Enrichment**: Calculate derived metrics like daily/weekly/monthly aggregates
+                - **Categorization**: Group transactions by type, category, and account
+                
+                #### 3. Data Loading
+                - Store processed data in a PostgreSQL database
+                - Create optimized tables for different view types (daily, weekly, monthly)
+                - Build aggregation tables for performance optimization
+                
+                #### 4. Visualization & Interaction
+                - Generate interactive charts based on user-selected filters
+                - Provide drill-down capabilities for detailed analysis
+                - Enable parameter adjustments for personalized insights
+                
+                #### 5. Insights Generation
+                - Calculate financial metrics like spending patterns and saving rates
+                - Compare current spending against historical trends
+                - Identify opportunities for budget optimization
+            """)
+            
+            # Add technical stack details
+            st.markdown("""
+                ### Technical Stack Details
+                
+                #### Frontend
+                - **Streamlit**: v1.14.0
+                - **Plotly Express**: v0.4.1
+                - **Custom CSS**: Modern dark theme optimized for financial data
+                
+                #### Backend
+                - **Python**: v3.9
+                - **Pandas**: v1.4.2
+                - **SQLAlchemy**: v1.4.37
+                - **PostgreSQL**: v14.3
+                
+                #### Deployment
+                - **Docker**: v20.10.16
+                - **Docker Compose**: v2.5.0
+                - **Container OS**: Python:3.9-slim
+            """)
         except FileNotFoundError:
             st.warning("Image not found")
+            
+        # Add a new section for usage instructions
+        st.subheader('Usage Instructions')
+        st.markdown("""
+            ### Getting the Most Out of SpendSense
+            
+            #### Data Preparation
+            1. Open your Bluecoins app and navigate to Settings > Backup & Restore
+            2. Select "Export data as CSV" and save the file
+            3. Make sure the CSV file contains all required columns (date, amount, category, etc.)
+            
+            #### Uploading Data
+            1. In the Data tab, click "Upload file here" and select your CSV file
+            2. Click "Generate Dashboard" to process the data
+            3. The system will populate all visualizations automatically
+            
+            #### Analyzing Insights
+            1. Use the sidebar filters to focus on specific accounts or time periods
+            2. Toggle between monthly, weekly, and daily views for different perspectives
+            3. Drill down into specific days using the Calendar Day Picker
+            4. Track credit card utilization in the Credit Card Summary section
+            
+            #### Best Practices
+            - Upload fresh data monthly to maintain up-to-date insights
+            - Use the "Clear Data" button before uploading new data to avoid duplicates
+            - Explore different visualization combinations to uncover hidden patterns
+            - Set realistic credit card limits based on your financial goals
+        """)
 
     # ----- GITHUB FOOTER -----
     st.markdown("""
