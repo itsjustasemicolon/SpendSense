@@ -9,6 +9,9 @@ any other file with the same CSV format to generate analytics.
 ![Data](images/data_tab.png)
 ![Dashboard](images/dashboard_tab1.png)
 ![Dashboard](images/dashboard_tab2.png)
+![Dashboard](images/dashboard_tab3.png)
+![Dashboard](images/dashboard_tab4.png)
+![Dashboard](images/dashboard_tab5.png)
 
 ## Motivation Behind the Project
 
